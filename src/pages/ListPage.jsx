@@ -1,13 +1,15 @@
 import {fetchItems} from "../services/api.js";
 import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, useSearchParams} from "react-router-dom";
 
 export default function ListPage() {
     const [items, setItems] = useState([]);
-    const [page, setPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(false);
     const ITEMS_PER_PAGE = 10;
+
+    const [searchParams, setSearchParams] = useSearchParams();
+    const page = parseInt(searchParams.get("page") || "1", 10);
 
     useEffect(() => {
         const loadItems = () => {
@@ -30,16 +32,8 @@ export default function ListPage() {
 
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
-    const handleNextPage = () => {
-        if (page < totalPages) {
-            setPage(page + 1);
-        }
-    };
-
-    const handlePrevPage = () => {
-        if (page > 1) {
-            setPage(page - 1);
-        }
+    const handlePageChange = (newPage) => {
+        setSearchParams({page: newPage});
     };
 
     if (loading) return <p>Загрузка...</p>;
@@ -56,9 +50,9 @@ export default function ListPage() {
                     </li>
                 ))}
             </ul>
-            <button onClick={handlePrevPage} disabled={page === 1}>Предыдущая</button>
+            <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>Предыдущая</button>
             <span>Страница {page} из {totalPages}</span>
-            <button onClick={handleNextPage} disabled={page === totalPages}>Следующая</button>
+            <button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>Следующая</button>
         </>
     );
 };
