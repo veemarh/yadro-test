@@ -1,20 +1,38 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {dataStore} from "../services/data-store.js";
+import {useForm} from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup";
+import * as Yup from "yup";
+import FormField from "../components/FormField.jsx";
+
+const validationSchema = Yup.object().shape({
+    title: Yup.string().required("Заголовок обязателен"),
+    body: Yup.string().required("Описание обязательно"),
+});
 
 export default function EditPage() {
     const {id} = useParams();
     const navigate = useNavigate();
-    const [item, setItem] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [errors, setErrors] = useState({});
+    const originalData = useRef({});
+    const [loading, setLoading] = useState(true);
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        formState: {errors, isSubmitting},
+    } = useForm({
+        resolver: yupResolver(validationSchema),
+    });
 
     useEffect(() => {
         const loadItemDetails = () => {
             setLoading(true);
             dataStore.getItemById(id)
                 .then((data) => {
-                    setItem(data);
+                    originalData.current = data;
+                    reset(data);
                 })
                 .catch((error) => {
                     console.error("Ошибка загрузки элемента:", error);
@@ -25,75 +43,31 @@ export default function EditPage() {
         };
 
         loadItemDetails();
-    }, [id]);
+    }, [id, reset]);
 
-    // Простая валидация формы
-    const validate = () => {
-        const errors = {};
-        if (!item.title.trim()) {
-            errors.title = "Заголовок обязателен";
-        }
-        if (!item.body.trim()) {
-            errors.body = "Описание обязательно";
-        }
-        return errors;
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const validationErrors = validate();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-        // Готовим обновленные данные; сохраняем все поля, чтобы не потерять другие данные элемента
+    const onSubmit = async (formData) => {
         const updatedData = {
-            ...item
+            ...originalData.current,
+            ...formData,
         };
 
-        dataStore.saveChange(id, updatedData);
-        navigate(`/details/${id}`);
+        try {
+            await dataStore.saveChange(id, updatedData);
+            navigate(`/details/${id}`);
+        } catch (error) {
+            console.error("Ошибка сохранения изменений:", error);
+        }
     };
 
     if (loading) return <p>Загрузка...</p>;
-    if (!item) return <p>Элемент не найден.</p>;
 
     return (
         <>
             <h1>Редактирование элемента</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>
-                        Заголовок:
-                        <input
-                            type="text"
-                            value={item.title}
-                            onChange={(e) => setItem(prevItem => ({
-                                ...prevItem,
-                                title: e.target.value
-                            }))}
-                        />
-                    </label>
-                    {errors.title && (
-                        <span style={{color: "red"}}>{errors.title}</span>
-                    )}
-                </div>
-                <div>
-                    <label>
-                        Описание:
-                        <textarea
-                            value={item.body}
-                            onChange={(e) => setItem(prevItem => ({
-                                ...prevItem,
-                                body: e.target.value
-                            }))}
-                        />
-                    </label>
-                    {errors.body && (
-                        <span style={{color: "red"}}>{errors.body}</span>
-                    )}
-                </div>
-                <button type="submit">Сохранить</button>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <FormField label="Заголовок" name="title" register={register} error={errors.title} type="text"/>
+                <FormField label="Описание" name="body" register={register} error={errors.body} as="textarea"/>
+                <button type="submit" disabled={isSubmitting}>Сохранить</button>
                 <button type="button" onClick={() => navigate(`/details/${id}`)}>Отмена</button>
             </form>
         </>
