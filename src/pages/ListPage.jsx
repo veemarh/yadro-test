@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Link, useSearchParams} from "react-router-dom";
+import {Link, useSearchParams, useNavigate} from "react-router-dom";
 import {dataStore} from "../services/data-store.js";
 
 export default function ListPage() {
@@ -9,13 +9,27 @@ export default function ListPage() {
     const ITEMS_PER_PAGE = 10;
 
     const [searchParams, setSearchParams] = useSearchParams();
-    const page = parseInt(searchParams.get("page") || "1", 10);
+    const navigate = useNavigate();
+
+    let page = parseInt(searchParams.get("page") || "1", 10);
 
     useEffect(() => {
+        if (isNaN(page) || page < 1) {
+            navigate("?page=1", {replace: true});
+            return;
+        }
+
         const loadItems = () => {
             setLoading(true);
             dataStore.getItemsWithChanges(page, ITEMS_PER_PAGE)
                 .then(({data, totalItems}) => {
+                    const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+                    if (page > totalPages && totalPages > 0) {
+                        navigate(`?page=${totalPages}`, {replace: true});
+                        return;
+                    }
+
                     setItems(data);
                     setTotalItems(totalItems);
                 })
@@ -28,12 +42,14 @@ export default function ListPage() {
         };
 
         loadItems();
-    }, [page]);
+    }, [page, navigate]);
 
     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 
     const handlePageChange = (newPage) => {
-        setSearchParams({page: newPage});
+        if (newPage >= 1 && newPage <= totalPages) {
+            setSearchParams({page: newPage});
+        }
     };
 
     if (loading) return <p>Загрузка...</p>;
