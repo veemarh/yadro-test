@@ -1,6 +1,6 @@
-import {fetchItems} from "../services/api.js";
 import {useEffect, useState} from "react";
 import {Link, useSearchParams} from "react-router-dom";
+import {dataStore} from "../services/data-store.js";
 
 export default function ListPage() {
     const [items, setItems] = useState([]);
@@ -14,7 +14,7 @@ export default function ListPage() {
     useEffect(() => {
         const loadItems = () => {
             setLoading(true);
-            fetchItems(page, ITEMS_PER_PAGE)
+            dataStore.getItemsWithChanges(page, ITEMS_PER_PAGE)
                 .then(({data, totalItems}) => {
                     setItems(data);
                     setTotalItems(totalItems);
