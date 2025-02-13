@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {dataStore} from "../services/data-store.js";
+import {useDataStore} from "../services/data-store.jsx";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
@@ -12,6 +12,7 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function EditPage() {
+    const {getItemById, saveChange} = useDataStore();
     const {id} = useParams();
     const navigate = useNavigate();
     const originalData = useRef({});
@@ -29,7 +30,7 @@ export default function EditPage() {
     useEffect(() => {
         const loadItemDetails = () => {
             setLoading(true);
-            dataStore.getItemById(id)
+            getItemById(id)
                 .then((data) => {
                     originalData.current = data;
                     reset(data);
@@ -43,7 +44,7 @@ export default function EditPage() {
         };
 
         loadItemDetails();
-    }, [id, reset]);
+    }, [id, reset, getItemById]);
 
     const onSubmit = async (formData) => {
         const updatedData = {
@@ -52,7 +53,7 @@ export default function EditPage() {
         };
 
         try {
-            await dataStore.saveChange(id, updatedData);
+            await saveChange(id, updatedData);
             navigate(`/details/${id}`);
         } catch (error) {
             console.error("Ошибка сохранения изменений:", error);

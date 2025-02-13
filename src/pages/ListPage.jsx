@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 import {Link, useSearchParams, useNavigate} from "react-router-dom";
-import {dataStore} from "../services/data-store.js";
+import {useDataStore} from "../services/data-store.jsx";
 
 export default function ListPage() {
+    const {getItemsWithChanges} = useDataStore();
     const [items, setItems] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -21,7 +22,7 @@ export default function ListPage() {
 
         const loadItems = () => {
             setLoading(true);
-            dataStore.getItemsWithChanges(page, ITEMS_PER_PAGE)
+            getItemsWithChanges(page, ITEMS_PER_PAGE)
                 .then(({data, totalItems}) => {
                     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
 

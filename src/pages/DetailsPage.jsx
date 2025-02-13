@@ -1,8 +1,9 @@
 import {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {dataStore} from "../services/data-store.js";
+import {useDataStore} from "../services/data-store.jsx";
 
 export default function DetailsPage() {
+    const {getItemById} = useDataStore();
     const {id} = useParams();
     const navigate = useNavigate();
     const [item, setItem] = useState(null);
@@ -11,7 +12,7 @@ export default function DetailsPage() {
     useEffect(() => {
         const loadItemDetails = () => {
             setLoading(true);
-            dataStore.getItemById(id)
+            getItemById(id)
                 .then((data) => {
                     setItem(data);
                 })
