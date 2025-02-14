@@ -1,8 +1,33 @@
-# React + Vite
+# YADRO | Test
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React application that displays and edits items by merging API data with local modifications stored in LocalStorage.
 
-Currently, two official plugins are available:
+### Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. **Item List**
+   - Displays items with details.
+   - Merges API data with LocalStorage modifications.
+   - Supports pagination.
+   - Clicking an item opens its Details page.
+
+2. **Item Details**
+   - Shows full API data for a selected item.
+   - Displays LocalStorage overrides if available.
+   - Edit button opens the Edit Form.
+
+3. **Edit Form**
+   - Edits a subset of item fields with validation.
+   - Saves changes to LocalStorage.
+   - Updated data is reflected on List and Details pages.
+
+### Implementation
+
+- **Frontend:** React, React Router, react-hook-form, Yup.
+- **Backend:** JSONPlaceholder API.
+- **LocalStorage:** Overrides and persists user modifications.
+- **Navigation:** Fully supports browser history.
+
+### Installation & Running
+
+```bash
+npm install && npm start
