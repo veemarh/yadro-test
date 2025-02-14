@@ -1,0 +1,149 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1em;
+}
+
+.content {
+    flex: 1 0 auto;
+    place-items: center;
+    align-content: center;
+}
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 1em;
+    justify-content: space-around;
+}
+
+.card {
+    flex: 1 0 264px;
+}
+
+.details {
+    width: 528px;
+    max-width: 100%;
+    margin-bottom: 1em;
+}
+
+.item {
+    display: flex;
+    flex-direction: column;
+    min-width: 264px;
+    gap: 1em;
+    padding: 1em;
+
+    border-radius: 0.5em;
+    outline: 1px solid rgba(255, 255, 255, 0.75);
+    color: inherit;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.card .item {
+    height: 264px;
+    transition: outline 0.2s, background-color 0.2s;
+}
+
+.card .item:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    outline: 1px solid #FFFFFF;
+}
+
+.form,
+.inner {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    gap: 1em;
+}
+
+.buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+    margin-top: 1em;
+}
+
+.formButton {
+    flex: 1 1 auto;
+}
+
+button.cancel {
+    color: #FFFFFF;
+    background: none;
+    transition: background-color 0.2s;
+}
+
+button.cancel:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+
+}
+
+.description,
+.user {
+    cursor: default;
+}
+
+.description {
+    color: #464646;
+}
+
+.cardTitle {
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+    height: 1.5em;
+}
+
+.cardMedium {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.mediumContent {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: calc(1.5em * 6);
+}
+
+.cardBottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+
+    color: #464646;
+}
+
+.linkBack {
+    display: inline-block;
+    width: 2em;
+    height: 2em;
+    margin: 1em 0;
+    align-content: center;
+    text-align: center;
+
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    color: #FFFFFF;
+    background-color: rgba(20, 20, 20, 0.8);
+}
+
+.linkBack:hover {
+    background-color: #141414;
+}

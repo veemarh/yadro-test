@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {useDataStore} from "../services/data-store.jsx";
+import styles from "../assets/css/pages.module.css";
+import Wrapper from "../components/Wrapper.jsx";
 
 export default function DetailsPage() {
     const {getItemById} = useDataStore();
@@ -8,6 +10,7 @@ export default function DetailsPage() {
     const navigate = useNavigate();
     const [item, setItem] = useState(null);
     const [loading, setLoading] = useState(false);
+    const location = useLocation();
 
     useEffect(() => {
         const loadItemDetails = () => {
@@ -27,15 +30,32 @@ export default function DetailsPage() {
         loadItemDetails();
     }, [id]);
 
-    if (loading) return <p>Загрузка...</p>;
-    if (!item) return <p>Элемент не найден.</p>;
+    const handleBack = () => {
+        if (location.state && location.state.from) {
+            navigate(location.state.from);
+        } else {
+            navigate("/");
+        }
+    };
+
+    if (loading) return <h1>Loading...</h1>;
+    if (!item) return <h1>Not found.</h1>;
 
     return (
-        <>
-            <h1>DetailsPage</h1>
-            <h2>{item.title}</h2>
-            <p>{item.body}</p>
-            <button onClick={() => navigate(`/edit/${id}`)}>Редактировать</button>
-        </>
+        <Wrapper title={`Details Item #${id}`}>
+            <div className={styles.details}>
+                <span className={styles.linkBack} onClick={handleBack}>&lt;</span>
+                <div className={styles.item}>
+                    <div className={styles.inner}>
+                        <span className={styles.user}>By User #{item.userId}</span>
+                        <h2>{item.title}</h2>
+                        <p className={styles.description}>{item.body}</p>
+                    </div>
+                    <div className={styles.buttons}>
+                        <button onClick={() => navigate(`/edit/${id}`)}>Edit</button>
+                    </div>
+                </div>
+            </div>
+        </Wrapper>
     );
 }

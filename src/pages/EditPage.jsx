@@ -1,14 +1,22 @@
-import React, {useEffect, useState, useRef} from "react";
+import {useEffect, useState, useRef} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useDataStore} from "../services/data-store.jsx";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import FormField from "../components/FormField.jsx";
+import styles from "../assets/css/pages.module.css";
+import Wrapper from "../components/Wrapper.jsx";
 
 const validationSchema = Yup.object().shape({
-    title: Yup.string().required("Заголовок обязателен"),
-    body: Yup.string().required("Описание обязательно"),
+    title: Yup.string()
+        .trim()
+        .test("not-empty", "Title is required", (value) => !!value && value.replace(/\s/g, "").length > 0)
+        .required("Title is required"),
+    body: Yup.string()
+        .trim()
+        .test("not-empty", "Description is required", (value) => !!value && value.replace(/\s/g, "").length > 0)
+        .required("Description is required"),
 });
 
 export default function EditPage() {
@@ -54,23 +62,35 @@ export default function EditPage() {
 
         try {
             await saveChange(id, updatedData);
-            navigate(`/details/${id}`);
+            navigate(-1);
         } catch (error) {
             console.error("Ошибка сохранения изменений:", error);
         }
     };
 
-    if (loading) return <p>Загрузка...</p>;
+    if (loading) return <h1>Loading...</h1>;
+    if (!originalData) return <h1>Not found.</h1>;
 
     return (
-        <>
-            <h1>Редактирование элемента</h1>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <FormField label="Заголовок" name="title" register={register} error={errors.title} type="text"/>
-                <FormField label="Описание" name="body" register={register} error={errors.body} as="textarea"/>
-                <button type="submit" disabled={isSubmitting}>Сохранить</button>
-                <button type="button" onClick={() => navigate(`/details/${id}`)}>Отмена</button>
-            </form>
-        </>
+        <Wrapper title={`Edit Item #${id}`}>
+            <div className={styles.details}>
+                <div className={styles.item}>
+                    <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+                        <div className={styles.inner}>
+                            <FormField label="Title" name="title" register={register} error={errors.title}
+                                       type="text"/>
+                            <FormField label="Description" name="body" register={register} error={errors.body}
+                                       as="textarea"/>
+                        </div>
+                        <div className={styles.buttons}>
+                            <button className={styles.formButton} type="submit" disabled={isSubmitting}>Save</button>
+                            <button className={`${styles.formButton} ${styles.cancel}`} type="button"
+                                    onClick={() => navigate(-1)}>Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </Wrapper>
     );
 }

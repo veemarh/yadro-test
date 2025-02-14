@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
-import {Link, useSearchParams, useNavigate} from "react-router-dom";
+import {Link, useSearchParams, useNavigate, useLocation} from "react-router-dom";
 import {useDataStore} from "../services/data-store.jsx";
+import styles from "../assets/css/pages.module.css";
+import Wrapper from "../components/Wrapper.jsx";
 
 export default function ListPage() {
     const {getItemsWithChanges} = useDataStore();
@@ -11,6 +13,7 @@ export default function ListPage() {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     let page = parseInt(searchParams.get("page") || "1", 10);
 
@@ -53,23 +56,34 @@ export default function ListPage() {
         }
     };
 
-    if (loading) return <p>Загрузка...</p>;
+    if (loading) return <h1>Loading...</h1>;
+    if (!items) return <h1>Not found.</h1>;
 
     return (
-        <>
-            <h1>ListPage</h1>
-            <ul>
+        <Wrapper title={"List Page"}>
+            <ul className={styles.list}>
                 {items.map((item) => (
-                    <li key={item.id}>
-                        <Link to={`/details/${item.id}`}>{item.title}</Link>
-                        <hr/>
-                        {item.body}
+                    <li className={styles.card} key={item.id}>
+                        <Link className={`${styles.item}`} to={`/details/${item.id}`}
+                              state={{from: location.pathname + location.search}}>
+                            <span className={styles.cardTitle}>{item.title}</span>
+                            <hr/>
+                            <div className={styles.cardMedium}><span
+                                className={styles.mediumContent}> {item.body}</span>
+                            </div>
+                            <div className={styles.cardBottom}>
+                                <span>ID #{item.id}</span>
+                                <span>User #{item.userId}</span>
+                            </div>
+                        </Link>
                     </li>
                 ))}
             </ul>
-            <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>Предыдущая</button>
-            <span>Страница {page} из {totalPages}</span>
-            <button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>Следующая</button>
-        </>
+            <div className={styles.buttons}>
+                <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>&lt;</button>
+                <span>{page} of {totalPages}</span>
+                <button onClick={() => handlePageChange(page + 1)} disabled={page === totalPages}>&gt;</button>
+            </div>
+        </Wrapper>
     );
 };

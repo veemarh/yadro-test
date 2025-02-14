@@ -1,0 +1,21 @@
+.label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    color: #464646;
+}
+
+.input {
+    min-width: 0;
+}
+
+.errorInput {
+    box-shadow: 0 0 0 1px #E44F41 inset;
+}
+
+.error {
+    position: absolute;
+    transform: translate(0.5em, 2.5em);
+    line-height: normal;
+    color: #E44F41;
+}
