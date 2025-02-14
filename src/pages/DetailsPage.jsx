@@ -44,7 +44,7 @@ export default function DetailsPage() {
     };
 
     if (loading) return <h1>Loading...</h1>;
-    if (error) return (
+    if (!item || error) return (
         <>
             <h1>{error}</h1>
             <div className={styles.buttons}>
