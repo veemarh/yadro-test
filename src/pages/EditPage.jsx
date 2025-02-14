@@ -69,7 +69,14 @@ export default function EditPage() {
     };
 
     if (loading) return <h1>Loading...</h1>;
-    if (!originalData) return <h1>Not found.</h1>;
+    if (!originalData.current) return (
+        <>
+            <h1>Couldn't process data.</h1>
+            <div className={styles.buttons}>
+                <button onClick={() => window.location.reload()}>Reload the page</button>
+            </div>
+        </>
+    );
 
     return (
         <Wrapper title={`Edit Item #${id}`}>

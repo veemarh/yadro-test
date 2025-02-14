@@ -39,7 +39,14 @@ export default function DetailsPage() {
     };
 
     if (loading) return <h1>Loading...</h1>;
-    if (!item) return <h1>Not found.</h1>;
+    if (!item) return (
+        <>
+            <h1>Couldn't upload data.</h1>
+            <div className={styles.buttons}>
+                <button onClick={() => window.location.reload()}>Reload the page</button>
+            </div>
+        </>
+    );
 
     return (
         <Wrapper title={`Details Item #${id}`}>

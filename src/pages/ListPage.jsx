@@ -9,6 +9,7 @@ export default function ListPage() {
     const [items, setItems] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const ITEMS_PER_PAGE = 10;
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -25,6 +26,7 @@ export default function ListPage() {
 
         const loadItems = () => {
             setLoading(true);
+            setError(null);
             getItemsWithChanges(page, ITEMS_PER_PAGE)
                 .then(({data, totalItems}) => {
                     const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
@@ -37,8 +39,9 @@ export default function ListPage() {
                     setItems(data);
                     setTotalItems(totalItems);
                 })
-                .catch((error) => {
-                    console.error("Ошибка загрузки элементов:", error);
+                .catch((err) => {
+                    console.error("Ошибка загрузки элементов:", err);
+                    setError("An error occurred. Try again later.");
                 })
                 .finally(() => {
                     setLoading(false);
@@ -57,6 +60,14 @@ export default function ListPage() {
     };
 
     if (loading) return <h1>Loading...</h1>;
+    if (error) return (
+        <>
+            <h1>{error}</h1>
+            <div className={styles.buttons}>
+                <button onClick={() => window.location.reload()}>Reload the page</button>
+            </div>
+        </>
+    );
     if (!items) return <h1>Not found.</h1>;
 
     return (
@@ -69,7 +80,7 @@ export default function ListPage() {
                             <span className={styles.cardTitle}>{item.title}</span>
                             <hr/>
                             <div className={styles.cardMedium}><span
-                                className={styles.mediumContent}> {item.body}</span>
+                                className={styles.mediumContent}>{item.body}</span>
                             </div>
                             <div className={styles.cardBottom}>
                                 <span>ID #{item.id}</span>
@@ -86,4 +97,4 @@ export default function ListPage() {
             </div>
         </Wrapper>
     );
-};
+}
