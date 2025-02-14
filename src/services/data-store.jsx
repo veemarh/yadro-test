@@ -47,7 +47,6 @@ export function DataStoreProvider({children}) {
                 item = await fetchItemById(id);
                 setServerData(prev => ({...prev, [id]: item}));
             } catch (error) {
-                console.error(`Ошибка загрузки элемента ${id}:`, error);
                 return null;
             }
         }

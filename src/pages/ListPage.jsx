@@ -39,8 +39,7 @@ export default function ListPage() {
                     setItems(data);
                     setTotalItems(totalItems);
                 })
-                .catch((err) => {
-                    console.error("Ошибка загрузки элементов:", err);
+                .catch(() => {
                     setError("An error occurred. Try again later.");
                 })
                 .finally(() => {

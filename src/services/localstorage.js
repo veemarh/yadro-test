@@ -11,7 +11,6 @@ const loadCache = () => {
         try {
             cachedData = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
         } catch (error) {
-            console.error("Ошибка при чтении localStorage:", error);
             cachedData = {};
         }
     }
@@ -38,6 +37,6 @@ export const updateModifiedItem = (id, updatedData) => {
         cache[id] = {...cache[id], ...updatedData};
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cache));
     } catch (error) {
-        console.error(`Ошибка при сохранении данных элемента ${id}:`, error);
+        throw error;
     }
 };

@@ -26,6 +26,7 @@ export default function EditPage() {
     const location = useLocation();
     const originalData = useRef({});
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const {
         register,
@@ -39,13 +40,17 @@ export default function EditPage() {
     useEffect(() => {
         const loadItemDetails = () => {
             setLoading(true);
+            setError(null);
             getItemById(id)
                 .then((data) => {
+                    if (!data) {
+                        throw new Error("Item not found");
+                    }
                     originalData.current = data;
                     reset(data);
                 })
-                .catch((error) => {
-                    console.error("Ошибка загрузки элемента:", error);
+                .catch(() => {
+                    setError("Couldn't upload data.");
                 })
                 .finally(() => {
                     setLoading(false);
@@ -65,7 +70,7 @@ export default function EditPage() {
             await saveChange(id, updatedData);
             handleBack();
         } catch (error) {
-            console.error("Ошибка сохранения изменений:", error);
+            setError("Couldn't save data.");
         }
     };
 
@@ -74,9 +79,9 @@ export default function EditPage() {
     };
 
     if (loading) return <h1>Loading...</h1>;
-    if (!originalData.current) return (
+    if (error) return (
         <>
-            <h1>Couldn't process data.</h1>
+            <h1>{error}</h1>
             <div className={styles.buttons}>
                 <button onClick={() => window.location.reload()}>Reload the page</button>
             </div>

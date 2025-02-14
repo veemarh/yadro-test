@@ -31,7 +31,6 @@ export const fetchItems = async (page = 1, limit = 10) => {
             totalItems: parseInt(totalItems, 10),
         };
     } catch (error) {
-        console.error('Ошибка при получении списка элементов:', error);
         throw error;
     }
 };
@@ -47,7 +46,6 @@ export const fetchItemById = async (id) => {
         const response = await api.get(`/${id}`);
         return response.data;
     } catch (error) {
-        console.error(`Ошибка при получении деталей элемента (id ${id}):`, error);
         throw error;
     }
 };

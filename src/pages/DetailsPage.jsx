@@ -10,17 +10,22 @@ export default function DetailsPage() {
     const navigate = useNavigate();
     const [item, setItem] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
     const location = useLocation();
 
     useEffect(() => {
         const loadItemDetails = () => {
             setLoading(true);
+            setError(null);
             getItemById(id)
                 .then((data) => {
+                    if (!data) {
+                        throw new Error("Item not found");
+                    }
                     setItem(data);
                 })
-                .catch((error) => {
-                    console.error("Ошибка загрузки элемента:", error);
+                .catch(() => {
+                    setError("Failed to load item.");
                 })
                 .finally(() => {
                     setLoading(false);
@@ -39,9 +44,9 @@ export default function DetailsPage() {
     };
 
     if (loading) return <h1>Loading...</h1>;
-    if (!item) return (
+    if (error) return (
         <>
-            <h1>Couldn't upload data.</h1>
+            <h1>{error}</h1>
             <div className={styles.buttons}>
                 <button onClick={() => window.location.reload()}>Reload the page</button>
             </div>
