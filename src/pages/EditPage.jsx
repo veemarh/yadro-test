@@ -1,5 +1,5 @@
 import {useEffect, useState, useRef} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useLocation} from "react-router-dom";
 import {useDataStore} from "../services/data-store.jsx";
 import {useForm} from "react-hook-form";
 import {yupResolver} from "@hookform/resolvers/yup";
@@ -23,6 +23,7 @@ export default function EditPage() {
     const {getItemById, saveChange} = useDataStore();
     const {id} = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const originalData = useRef({});
     const [loading, setLoading] = useState(true);
 
@@ -62,10 +63,14 @@ export default function EditPage() {
 
         try {
             await saveChange(id, updatedData);
-            navigate(-1);
+            handleBack();
         } catch (error) {
             console.error("Ошибка сохранения изменений:", error);
         }
+    };
+
+    const handleBack = () => {
+        navigate(`/details/${id}`, {state: {from: location.state?.from || "/"}});
     };
 
     if (loading) return <h1>Loading...</h1>;
@@ -92,7 +97,7 @@ export default function EditPage() {
                         <div className={styles.buttons}>
                             <button className={styles.formButton} type="submit" disabled={isSubmitting}>Save</button>
                             <button className={`${styles.formButton} ${styles.cancel}`} type="button"
-                                    onClick={() => navigate(-1)}>Cancel
+                                    onClick={handleBack}>Cancel
                             </button>
                         </div>
                     </form>

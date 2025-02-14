@@ -59,7 +59,9 @@ export default function DetailsPage() {
                         <p className={styles.description}>{item.body}</p>
                     </div>
                     <div className={styles.buttons}>
-                        <button onClick={() => navigate(`/edit/${id}`)}>Edit</button>
+                        <button
+                            onClick={() => navigate(`/edit/${id}`, {state: location.state || "/"})}>Edit
+                        </button>
                     </div>
                 </div>
             </div>
