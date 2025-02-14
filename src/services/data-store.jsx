@@ -41,16 +41,20 @@ export function DataStoreProvider({children}) {
      * @returns {Promise<Object|null>} - промис, возвращающий данные элемента или null в случае ошибки
      */
     const getItemById = async (id) => {
-        if (!serverData[id]) {
+        let item = serverData[id];
+        if (!item) {
             try {
-                const item = await fetchItemById(id);
+                item = await fetchItemById(id);
                 setServerData(prev => ({...prev, [id]: item}));
             } catch (error) {
                 console.error(`Ошибка загрузки элемента ${id}:`, error);
                 return null;
             }
         }
-        return loadDataById(id);
+        return {
+            ...item,
+            ...(modifiedItems[id] || {}),
+        };
     };
 
     /**
@@ -80,19 +84,6 @@ export function DataStoreProvider({children}) {
                 return newModified;
             });
         }
-    };
-
-    /**
-     * Возвращает актуальные данные элемента.
-     *
-     * @param {number|string} id - идентификатор элемента
-     * @returns {Object} - объект с актуальными данными элемента.
-     */
-    const loadDataById = (id) => {
-        return {
-            ...serverData[id],
-            ...modifiedItems[id],
-        };
     };
 
     const value = {
